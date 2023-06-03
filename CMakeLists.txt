@@ -15,7 +15,7 @@ else (CUDA_FOUND)
   message (SEND_ERROR "Unable to locate CUDA")
 endif()
 
-find_package(Eigen3 REQUIRED)
+find_package(Eigen3)
 if(EIGEN3_FOUND)
   include_directories(${EIGEN3_INCLUDE_DIR})
   message(STATUS "EIGEN3_INCLUDE_DIR = ${EIGEN3_INCLUDE_DIR}")
