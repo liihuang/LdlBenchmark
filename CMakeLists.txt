@@ -1,20 +1,25 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.18)
 
-project(LdlBenchmark)
+project(LdlBenchmark LANGUAGES CXX CUDA)
 
-enable_language(CUDA)
+set(CMAKE_CUDA_ARCHITECTURES 75)
 
-set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+find_package(CUDAToolkit REQUIRED)
 
-# find_package(Eigen3)
-# if(EIGEN3_FOUND)
-#   include_directories(${EIGEN3_INCLUDE_DIR})
-#   message(STATUS "EIGEN3_INCLUDE_DIR = ${EIGEN3_INCLUDE_DIR}")
-# else()
-  include_directories("eigen-3.4.0")
-# endif()
+add_library(cuda_target INTERFACE)
+
+target_link_libraries(cuda_target INTERFACE CUDA::cudart)
+
+include_directories("eigen-3.4.0")
 
 add_executable(LdlBenchmark ldl_benchmark.cu)
 
-target_link_libraries(LdlBenchmark ${LINK_LIBRARIES})
+set_property(TARGET LdlBenchmark PROPERTY CXX_STANDARD 17)
+    
+target_compile_options(LdlBenchmark PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:
+        --generate-line-info
+        --use_fast_math
+    >)
+
+    
+target_link_libraries(LdlBenchmark cuda_target )
